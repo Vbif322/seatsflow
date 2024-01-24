@@ -1,4 +1,4 @@
-import { ChosenRest, UserInfo } from "@/utils/types";
+import { restaurant, UserInfo } from "@/utils/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { destroyCookie } from "nookies";
@@ -28,7 +28,7 @@ type InitialState = {
   token: string;
   message: string;
   chosenRestID: number;
-  chosenRest: ChosenRest;
+  chosenRest: restaurant;
   restaurants: any[];
   granted_restaurants: any[];
   userInfo: UserInfo;
@@ -74,7 +74,10 @@ const tokenSlice = createSlice({
       return {
         ...initialState,
         ...action.payload,
-        chosenRest: action.payload.restaurants[0] || {},
+        chosenRest:
+          action.payload.restaurants[0] ||
+          action.payload.granted_restaurants[0] ||
+          {},
       };
     },
     logout: () => {

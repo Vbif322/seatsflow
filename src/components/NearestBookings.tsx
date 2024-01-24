@@ -16,9 +16,15 @@ import { useRouter } from "next/router";
 const NearestBookings = ({ bookings = [] }) => {
   const router = useRouter();
 
+  const nearestBookigs = bookings.filter(
+    (booking) => dayjs(booking.start_time).diff(dayjs(), "m") < 1440
+  );
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <Typography variant="subtitle1">Предстоящие бронирования</Typography>
+      <Typography variant="subtitle1" sx={{ whiteSpace: "nowrap" }}>
+        Предстоящие бронирования на сегодня
+      </Typography>
       <TableContainer sx={{ borderRadius: "10px", border: "1px solid #000" }}>
         <Table>
           <TableHead>
@@ -33,7 +39,7 @@ const NearestBookings = ({ bookings = [] }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bookings.map((booking, i) => {
+            {nearestBookigs.map((booking, i) => {
               if (i === 4) {
                 return (
                   <TableRow key={i}>
@@ -57,7 +63,7 @@ const NearestBookings = ({ bookings = [] }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button variant="outlined" onClick={() => router.push("/BookingHistory")}>
+      <Button variant="outlined" onClick={() => router.push("/bookinghistory")}>
         Смотреть полный список
       </Button>
     </Box>

@@ -6,6 +6,9 @@ import { ThemeProvider } from "@emotion/react";
 import theme from "../theme";
 import Layout from "@/components/Layout";
 import { parseCookies } from "nookies";
+import AlertPopup from "@/components/AlertPopup/AlertPopup";
+import ErrorBoundary from "@/ErrorBoundary";
+import EventConnection from "./EventConnection";
 
 function App({ Component, ...rest }: AppProps) {
   const {
@@ -13,13 +16,17 @@ function App({ Component, ...rest }: AppProps) {
     props: { session, ...props },
   } = wrapper.useWrappedStore(rest);
   return (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <Layout>
-          <Component {...props.pageProps} />
-        </Layout>
-      </Provider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <Layout>
+            <EventConnection />
+            <AlertPopup />
+            <Component {...props.pageProps} />
+          </Layout>
+        </Provider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

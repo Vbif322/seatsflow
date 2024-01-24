@@ -66,7 +66,7 @@ export default function Login() {
           gap: 8,
         }}
       >
-        <Typography variant="h4">Seatsflow</Typography>
+        <Typography variant="h4">SeatsFlow</Typography>
         <Box
           sx={{
             width: "496px",
@@ -103,7 +103,7 @@ export default function Login() {
               id="username"
               name="username"
               error={errors.username || error ? true : false}
-              helperText={errors.username ? "Необходимо заполнить" : ""}
+              helperText={errors.username ? `${errors.username.message}` : ""}
               {...register("username", {
                 required: {
                   value: true,
@@ -118,7 +118,7 @@ export default function Login() {
               name="password"
               type="password"
               error={errors.password || error ? true : false}
-              helperText={errors.password ? "Необходимо заполнить" : ""}
+              helperText={errors.password ? `${errors.password.message}` : ""}
               {...register("password", {
                 required: {
                   value: true,
@@ -134,7 +134,7 @@ export default function Login() {
               Восстановить пароль
             </Typography>
           </Box>
-          <Typography>{loginError}</Typography>
+          <Typography color={"error"}>{loginError}</Typography>
           <Box
             sx={{
               display: "flex",

@@ -2,9 +2,24 @@ import { TextField } from "@mui/material";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
-type Props = { name: string; label: string; sxStyle?: object; rules?: object };
+type Props = {
+  name: string;
+  label: string;
+  sxStyle?: object;
+  rules?: object;
+  type?: string;
+  size?: "small" | "medium" | undefined;
+};
 
-const MUITextField = ({ name, label, sxStyle, rules, ...props }: Props) => {
+const MUITextField = ({
+  name,
+  label,
+  sxStyle,
+  rules,
+  type,
+  ...props
+}: Props) => {
+  // console.log(props);
   const {
     control,
     formState: { errors },
@@ -22,7 +37,8 @@ const MUITextField = ({ name, label, sxStyle, rules, ...props }: Props) => {
           label={label}
           variant="outlined"
           error={!!errors[name]}
-          //   helperText={errors[name]?.message}
+          type={type}
+          helperText={errors[name] ? `${errors[name]?.message}` : ""}
           sx={sxStyle}
           {...props}
           autoComplete="off"

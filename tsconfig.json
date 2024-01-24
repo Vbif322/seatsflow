@@ -31,7 +31,9 @@
     "src/pages/settings.tsx",
     "src/pages/register.tsx",
     "src/pages/pickrest.tsx",
-    "src/pages/myrests/[id].tsx"
+    "src/pages/myrests/[id].tsx",
+    "src/components/Forms/TimeTableForm",
+    "src/ErrorBoundary.jsx"
   ],
   "exclude": ["node_modules"]
 }

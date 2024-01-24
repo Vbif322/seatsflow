@@ -7,11 +7,10 @@ import {
 import tokenSlice from "./user/tokenSlice";
 import restSlice from "./restSlice";
 import bookingSlice from "./bookingSlice";
-import api from "../api";
+import { api } from "../storage/api/api";
 import SubusersSlice from "./SubusersSlice";
-import { subusersApi } from "./api/subusersApi";
+import classApi from "../api";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
-import { bookingsApi } from "./api/bookingsApi";
 import {
   useSelector as useReduxSelector,
   useDispatch as useReduxDispatch,
@@ -19,6 +18,7 @@ import {
 } from "react-redux";
 import { createWrapper } from "next-redux-wrapper";
 import { rtkQueryErrorLogger } from "@/utils/ErrorMiddleware";
+import alertSlice from "./alertSlice";
 
 export const createStore = () =>
   configureStore({
@@ -27,20 +27,16 @@ export const createStore = () =>
       rest: restSlice,
       booking: bookingSlice,
       subusers: SubusersSlice,
-      [subusersApi.reducerPath]: subusersApi.reducer,
-      [bookingsApi.reducerPath]: bookingsApi.reducer,
+      alert: alertSlice,
+      [api.reducerPath]: api.reducer,
     },
     devTools: true,
     middleware: (getDefaultMiddleware: any) =>
       getDefaultMiddleware({
         thunk: {
-          extraArgument: api,
+          extraArgument: classApi,
         },
-      }).concat(
-        subusersApi.middleware,
-        bookingsApi.middleware,
-        rtkQueryErrorLogger
-      ),
+      }).concat(api.middleware, rtkQueryErrorLogger),
   });
 
 export const store = createStore();

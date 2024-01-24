@@ -4,7 +4,7 @@ export const restaurantsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     addRestaurant: builder.mutation({
       query: (body) => ({
-        url: "restaurant",
+        url: "restaurants",
         method: "POST",
         body,
       }),

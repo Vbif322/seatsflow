@@ -23,6 +23,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import theme from "../theme";
 import { usePathname } from "next/navigation";
+import CampaignIcon from "@mui/icons-material/Campaign";
 
 const MenuItem = ({ text, children, isActive }) => {
   return (
@@ -63,6 +64,11 @@ const Menu = () => {
               <DashboardIcon />
             </MenuItem>
           </Link>
+          <Link href="/orders">
+            <MenuItem text={"Заявки"} isActive={pathname === "/orders"}>
+              <CampaignIcon />
+            </MenuItem>
+          </Link>
           <Link href="/addbooking">
             <MenuItem
               text={"Добавить бронирование"}
@@ -79,7 +85,7 @@ const Menu = () => {
               <HistoryIcon />
             </MenuItem>
           </Link>
-          <Link href="edittemplate">
+          <Link href="/edittemplate">
             <MenuItem
               text={"Шаблон заведения"}
               isActive={pathname === "/edittemplate"}
@@ -103,7 +109,7 @@ const Menu = () => {
         </List>
         <Divider />
         <List>
-          <Link href="settings">
+          <Link href="/settings">
             <MenuItem text={"Настройки"} isActive={pathname === "/settings"}>
               <SettingsIcon />
             </MenuItem>

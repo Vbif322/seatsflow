@@ -1,59 +1,26 @@
-import { Autocomplete, Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import {
   DatePicker,
   LocalizationProvider,
   MobileTimePicker,
+  TimePicker,
+  renderTimeViewClock,
 } from "@mui/x-date-pickers";
 import "dayjs/locale/ru";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { Controller, useForm } from "react-hook-form";
 import dayjs from "dayjs";
-import { findID } from "../utils/functions";
-import { useSelector } from "@/storage/store";
+import { booking } from "@/utils/types";
 
-type booking = {
-  booking_id: string;
-  creator: string;
-  hall_id: string;
-  hall_name: string;
-  start_time: string;
-  table_id: string;
-  table_name: string;
-  visitor_amount: number;
-  visitor_comment: string;
-  visitor_name: string;
-  visitor_phone: string;
-};
-export const BookingForm = ({
-  editBooking = null,
-  submitFunc,
-}: {
-  editBooking?: booking;
-  submitFunc: any;
-}) => {
-  const [hall, setHall] = useState(null);
-  const [table, setTable] = useState(null);
+type Props = { editBooking?: booking; submitFunc: any };
 
-  const {
-    restaurants,
-    granted_restaurants,
-    chosenRest,
-  }: { restaurants: any; chosenRest: any; granted_restaurants: any } =
-    useSelector((state) => state.token);
-  const { register, control, setValue, handleSubmit, getValues, watch } =
-    useForm();
-
-  const hallHandler = (event, newValue) => {
-    setHall(newValue);
-    setTable(null);
-  };
+const OrderForm = ({ editBooking = null, submitFunc }: Props) => {
+  const { register, control, setValue, handleSubmit } = useForm();
 
   useEffect(() => {
     if (editBooking) {
-      setHall(editBooking.hall_name);
-      setTable(editBooking.table_name);
       setValue("date", dayjs(editBooking.start_time));
       setValue("time", dayjs(editBooking.start_time));
       Object.keys(editBooking).map((key) => {
@@ -62,8 +29,6 @@ export const BookingForm = ({
       });
     }
   }, [editBooking, setValue]);
-
-  const watchVisitorAmount = watch("visitor_amount");
 
   return (
     <form onSubmit={handleSubmit(submitFunc)}>
@@ -104,11 +69,15 @@ export const BookingForm = ({
           }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-              <MobileTimePicker
+              <TimePicker
                 label="Время"
                 value={value}
                 onChange={(event) => {
                   onChange(event);
+                }}
+                viewRenderers={{
+                  hours: renderTimeViewClock,
+                  minutes: renderTimeViewClock,
                 }}
               />
             </LocalizationProvider>
@@ -139,52 +108,6 @@ export const BookingForm = ({
           autoComplete="off"
           {...register("visitor_comment")}
         />
-        <Autocomplete
-          value={hall}
-          onChange={hallHandler}
-          disablePortal
-          id="hall"
-          options={
-            Object.values(chosenRest).length
-              ? chosenRest?.halls?.map((hall) => hall.name)
-              : []
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              name="hall_name"
-              label="Зал"
-              {...register("hall_name", { required: true })}
-            />
-          )}
-        />
-        <Autocomplete
-          value={table}
-          onChange={(event, newValue) => {
-            setTable(newValue);
-          }}
-          disablePortal
-          id="table"
-          getOptionDisabled={(option) =>
-            option === "Необходимо сначала выбрать зал"
-          }
-          options={
-            hall
-              ? findID(chosenRest.halls, hall)
-                  ?.tables.filter((table) => {
-                    return table.capacity > 1;
-                  })
-                  .map((table) => table.name)
-              : ["Необходимо сначала выбрать зал"]
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Номер стола"
-              {...register("table_name", { required: true })}
-            />
-          )}
-        />
         <Button
           variant="contained"
           color="secondary"
@@ -195,9 +118,11 @@ export const BookingForm = ({
             alignSelf: "center",
           }}
         >
-          {editBooking?.booking_id ? "Сохранить" : "Забронировать"}
+          {editBooking?.booking_id ? "Сохранить" : "Создать заявку"}
         </Button>
       </Box>
     </form>
   );
 };
+
+export default OrderForm;

@@ -8,9 +8,6 @@ export const bookingsApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      // providesTags: (result) =>
-      // result
-      // ? [...result.futureBookings.map(({booking_id}) => ({type: 'Bookings', booking_id})), 'Bookings'] : ['Bookings']
       providesTags: ["Bookings"],
     }),
     getOldBookings: builder.query({
@@ -23,7 +20,6 @@ export const bookingsApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      // invalidatesTags: [{type: 'Bookings', id: 'LIST'}]
       invalidatesTags: ["Bookings"],
     }),
     editBooking: builder.mutation({

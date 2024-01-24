@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import React, { useState } from "react";
-import { BookingForm } from "./BookingForm";
+import { BookingForm } from "./Forms/BookingForm/BookingForm";
 import {
   useDeleteBookingMutation,
   useEditBookingMutation,
@@ -23,6 +23,7 @@ import {
 import { findID } from "../utils/functions";
 import { useSelector } from "@/storage/store";
 import { isErrorWithMessage, isFetchBaseQueryError } from "@/utils/helpers";
+import { booking } from "@/utils/types";
 
 const PatchBookingDialog = ({ open, setOpen, editBooking, submitForm }) => {
   const handleClose = () => {

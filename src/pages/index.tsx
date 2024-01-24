@@ -1,12 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Typography } from "@mui/material";
 import React from "react";
 import "dayjs/locale/ru";
 import NearestBookings from "../components/NearestBookings";
@@ -19,16 +11,19 @@ import {
   useGetBookingsQuery,
 } from "../storage/api/bookingsApi";
 import { ListRestCards } from "../components/ListRestCards";
-import { BookingForm } from "../components/BookingForm";
 import { findID } from "../utils/functions";
 import { useRouter } from "next/router";
 import { isErrorWithMessage, isFetchBaseQueryError } from "@/utils/helpers";
+import OrderForm from "@/components/Forms/OrderForm/OrderForm";
+import { setAlerts } from "@/storage/alertSlice";
+import { useAddOrderMutation } from "@/storage/api/ordersApi";
 
 export default function Home() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { restaurants, chosenRestID, error, chosenRest, granted_restaurants } =
-    useSelector((state) => state.token);
+  const { restaurants, error, chosenRest, granted_restaurants } = useSelector(
+    (state) => state.token
+  );
   React.useEffect(() => {
     if (localStorage.getItem("token")) {
       dispatch(fetchFullData(""));
@@ -43,41 +38,38 @@ export default function Home() {
   );
 
   const [addBookingData] = useAddBookingMutation();
-  const [alert, setAlert] = React.useState(false);
+  const [addOrder] = useAddOrderMutation();
 
   const addBookingHandler = async (data) => {
     let fullDate = dayjs(
       `${data.date.format("YYYY-MM-DDT")}${data.time.format("HH:mm:ssZ")}`
     );
-    if (data.hall_name && data.table_name) {
-      let hallObject = findID(chosenRest.halls, data.hall_name);
-      try {
-        await addBookingData({
-          restaurant_id: chosenRest.restaurant_id,
-          hall_id: hallObject.hall_id,
-          table_id: findID(hallObject.tables, data.table_name).table_id,
-          visitor_name: data.visitor_name,
-          visitors_amount: data.visitor_amount,
-          start_time: fullDate.format(),
-          end_time: fullDate.add(2, "h").format(),
-          visitor_phone: data.visitor_phone,
-          visitor_comment: data.visitor_comment,
-        }).unwrap();
-        setAlert(true);
-        setTimeout(() => setAlert(false), 5000);
-      } catch (err) {
-        if (isFetchBaseQueryError(err)) {
-          // you can access all properties of `FetchBaseQueryError` here
-          const errMsg = "error" in err ? err.error : JSON.stringify(err.data);
-          // enqueueSnackbar(errMsg, { variant: 'error' })
-          console.warn(errMsg);
-        } else if (isErrorWithMessage(err)) {
-          // you can access a string 'message' property here
-          // enqueueSnackbar(err.message, { variant: 'error' })
-          console.warn(err);
-        }
+    try {
+      await addOrder({
+        restaurant_id: chosenRest.restaurant_id,
+        visitor_name: data.visitor_name,
+        visitors_amount: data.visitor_amount,
+        start_time: fullDate.format(),
+        visitor_phone: data.visitor_phone,
+        visitor_comment: data.visitor_comment,
+      })
+        .unwrap()
+        .then(() =>
+          dispatch(setAlerts({ type: "success", text: "Заявка создана" }))
+        );
+    } catch (err) {
+      dispatch(setAlerts({ type: "error", text: "Произошла ошибка" }));
+      if (isFetchBaseQueryError(err)) {
+        // you can access all properties of `FetchBaseQueryError` here
+        const errMsg = "error" in err ? err.error : JSON.stringify(err.data);
+        // enqueueSnackbar(errMsg, { variant: 'error' })
+        console.warn(errMsg);
+      } else if (isErrorWithMessage(err)) {
+        // you can access a string 'message' property here
+        // enqueueSnackbar(err.message, { variant: 'error' })
+        console.warn(err);
       }
-    } else console.log(123);
+    }
   };
 
   if (error) {
@@ -88,24 +80,31 @@ export default function Home() {
 
   if (restaurants.length === 0 && granted_restaurants.length === 0) {
     return (
-      <Dialog open={restaurants.length === 0}>
-        <DialogTitle>У вас пока нет ресторанов, добавим?</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => router.push("addrest")}>Вперед</Button>
-        </DialogActions>
-      </Dialog>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+          gap: 2,
+          mt: 15,
+        }}
+      >
+        <Typography variant="h4">
+          У вас пока нет ресторанов, добавим?
+        </Typography>
+        <Button
+          onClick={() => router.push("addrest")}
+          variant="contained"
+          color="secondary"
+        >
+          Добавить
+        </Button>
+      </Box>
     );
   }
 
   return (
     <Box sx={{ p: 4 }}>
-      {alert && (
-        <Box sx={{ position: "absolute", left: 16, zIndex: 3000, bottom: 32 }}>
-          <Alert severity="success" onClose={() => setAlert(false)}>
-            Бронирование успешно добавлено
-          </Alert>
-        </Box>
-      )}
       <Typography variant="h4" sx={{ mb: 8 }}>
         {chosenRest?.name}
       </Typography>
@@ -114,7 +113,7 @@ export default function Home() {
           <Typography variant="subtitle1" mb={4}>
             Создать бронирование
           </Typography>
-          <BookingForm submitFunc={addBookingHandler} />
+          <OrderForm submitFunc={addBookingHandler} />
           {restaurants.length >= 0 ? (
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ mt: 8 }}>

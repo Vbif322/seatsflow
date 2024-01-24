@@ -6,8 +6,9 @@ import { useDispatch, useSelector } from "@/storage/store";
 import { changeRest } from "../storage/user/tokenSlice";
 import EastIcon from "@mui/icons-material/East";
 import { useRouter } from "next/router";
+import TimeTable from "./TimeTable/TimeTable";
 
-export const RestCard = ({ name, id, index, granted = false }) => {
+export const RestCard = ({ name, id, index, granted = false, time_table }) => {
   const [chosen, setChosen] = useState(false);
   const [elevation, setElevation] = useState(3);
   const { chosenRest } = useSelector((state) => state.token);
@@ -67,9 +68,15 @@ export const RestCard = ({ name, id, index, granted = false }) => {
         <Typography variant="h5" component="p">
           {name}
         </Typography>
-        <Typography variant="subtitle2" sx={{ justifySelf: "end" }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </Typography>
+
+        {!time_table || Object.keys(time_table).length === 0 ? (
+          <Typography variant="subtitle2" sx={{ justifySelf: "end" }}>
+            Круглосуточно
+          </Typography>
+        ) : (
+          // <TimeTable time_table={time_table} />
+          <Typography>Расписание</Typography>
+        )}
       </Box>
       <Divider />
       <Box

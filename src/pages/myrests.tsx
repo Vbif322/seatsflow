@@ -31,6 +31,7 @@ const MyRests = () => {
                 name={rest.name}
                 id={rest.restaurant_id}
                 index={i}
+                time_table={rest.time_table}
               />
             );
           })}
@@ -57,6 +58,7 @@ const MyRests = () => {
                   id={rest.restaurant_id}
                   index={i}
                   granted
+                  time_table={rest.time_table}
                 />
               );
             })}

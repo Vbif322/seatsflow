@@ -24,7 +24,6 @@ const Subusers = () => {
   const { data, error, isLoading } = useGetSubusersQuery("");
 
   React.useEffect(() => {
-    document.title = "Дополнительные пользователи";
     if (!isLoading && !error) {
       dispatch(setSubusersData({ data, error }));
     }

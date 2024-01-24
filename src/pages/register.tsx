@@ -43,7 +43,7 @@ const RegisterPage = () => {
           gap: 8,
         }}
       >
-        <Typography variant="h4">PO RESTORANAM</Typography>
+        <Typography variant="h4">SeatsFlow</Typography>
         <Box
           sx={{
             width: "496px",
@@ -72,15 +72,15 @@ const RegisterPage = () => {
               label="Email"
               id="usernameRegister"
               name="username"
-              error={errors.username ? true : false}
-              helperText={errors.username ? "Необходимо заполнить" : ""}
+              error={!!errors?.username}
+              helperText={errors.username ? `${errors.username.message}` : ""}
               {...register("username", {
                 required: {
                   value: true,
                   message: "Необходимо заполнить",
                 },
                 pattern: {
-                  value: /^\w+@[a-zA-Z_]+?\.\w{2,6}$/,
+                  value: /@/g,
                   message: "Должен быть email",
                 },
               })}

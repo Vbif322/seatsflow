@@ -3,7 +3,6 @@ import { destroyCookie } from "nookies";
 const onResponce = (res) => {
   if (res.status === 401) {
     destroyCookie(null, "token");
-    window.location.reload();
   }
   return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
 };
@@ -62,50 +61,6 @@ class Api {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    }).then(onResponce);
-  }
-
-  addRestaurant(body) {
-    return fetch(`${this.path}/restaurants`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(body),
-    }).then(onResponce);
-  }
-
-  addBooking(body) {
-    return fetch(`${this.path}/booking`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(body),
-    }).then(onResponce);
-  }
-
-  getBookings(body) {
-    return fetch(`${this.path}/data/bookings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(body),
-    }).then(onResponce);
-  }
-
-  getSubusers(body) {
-    return fetch(`${this.path}/data/inheritors`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(body),
     }).then(onResponce);
   }
 }
